@@ -74,7 +74,7 @@ Clone Explicates:
 
 ```bash
 mkdir /var/www
-git clone https://github.com/alexandermendes/explicates /var/www/explicates
+git clone https://github.com/harryjmoss/explicates /var/www/explicates
 ```
 
 Create a virtual environment:

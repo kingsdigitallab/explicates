@@ -11,7 +11,7 @@ requirements = [
     "zipstream>=1.1.4, <1.2.0",
     "psycopg2>=2.5.2, <3.0",
     "future>=0.16.0, <1.0.0",
-    "mkdocs>=0.17.1, <1.0.0",
+    "mkdocs",
     "mkdocs-material",
     "pymdown-extensions",
     "markdown_include",
@@ -25,15 +25,18 @@ requirements = [
     "pycodestyle"
 ]
 
+with open('README.md') as f:
+    readme = f.read()
 
 setup(
     name='explicates',
-    version='0.3.0',
+    version='0.1.0',
     packages=find_packages(),
     install_requires=requirements,
-    author='Alexander Mendes',
-    author_email='alexanderhmendes@gmail.com',
-    description='A PostgreSQL-backed Web Annotation server',
+    author='Harry Moss',
+    author_email='harryjamesmoss1@gmail.com',
+    description='Forked https://github.com/alexandermendes/explicates',
+    long_description=readme,
     license='MIT',
-    download_url='https://github.com/alexandermendes/explicates'
+    download_url='https://github.com/harryjmoss/explicates'
 )

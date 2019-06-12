@@ -1,11 +1,12 @@
 # Explicates
 
-[![Build Status](https://travis-ci.org/alexandermendes/explicates.svg?branch=master)](https://travis-ci.org/alexandermendes/explicates)
-[![Coverage Status](https://coveralls.io/repos/github/alexandermendes/explicates/badge.svg?branch=master)](https://coveralls.io/github/alexandermendes/explicates?branch=master)
+[![Build Status](https://travis-ci.org/harryjmoss/explicates.svg?branch=master)](https://travis-ci.org/harryjmoss/explicates)
+[![Coverage Status](https://coveralls.io/repos/github/harryjmoss/explicates/badge.svg?branch=master)](https://coveralls.io/repos/github/harryjmoss/explicates/badge.svg?branch=master)
 
-> A PostgreSQL-backed Web Annotation server.
+https://coveralls.io/repos/github/harryjmoss/explicates/badge.svg?branch=master
+[**Read the documentation**](https://harryjmoss.github.io/explicates/)
 
-[**Read the documentation**](https://alexandermendes.github.io/explicates/)
+A fork of Explicates - A PostgreSQL-backed Web Annotation server by Alexander Mendes (https://github.com/alexandermendes/explicates) - forked at v0.3.0
 
 ## Setup
 
@@ -40,7 +41,7 @@ cp settings.py.tmpl settings.py
 
 ## Testing
 
-Explicates is tested against [Python 2.7 and 3.4](https://travis-ci.org/alexandermendes/explicates):
+Explicates is tested against [Python 2.7 and 3.4](https://travis-ci.org/harryjmoss/explicates):
 
 ```bash
 # python 2
