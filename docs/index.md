@@ -1,3 +1,5 @@
+A fork of [Explicates](https://github.com/alexandermendes/explicates) by Alexander Mendes. These docs mirror those found [here](https://alexandermendes.github.io/explicates/).
+
 Explicates is a Web Annotation server built with
 [Flask](http://flask.pocoo.org/) and backed by
 [PostgreSQL](https://www.postgresql.org/). It complies with the
