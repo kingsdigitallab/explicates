@@ -114,7 +114,7 @@ The `fts` query accepts the following parameters for each field:
     The dictionary used for full-text searches is defined for each Annotation
     by the first `language` code found in the Annotation's `body`. If no
     such language code is found then the server default is used. See the
-    [Configuration](/setup.md#configuration) section for more details of
+    [Configuration](/setup#configuration) section for more details of
     the available dictionaries.
 
 ## fts_phrase
@@ -144,7 +144,7 @@ The `fts_phrase` query accepts the following parameters for each field:
 !!! note "Exact phrase searches"
 
     Note that all phrase queries will be treated as prefixes; to search for
-    exact phrases use [`contains`](/search.md#contains) instead.
+    exact phrases use [`contains`](/search#contains) instead.
 
 ## deleted
 
