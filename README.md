@@ -3,9 +3,10 @@
 [![Build Status](https://travis-ci.com/harryjmoss/explicates.svg?branch=master)](https://travis-ci.com/harryjmoss/explicates)
 [![Coverage Status](https://coveralls.io/repos/github/harryjmoss/explicates/badge.svg?branch=master)](https://coveralls.io/repos/github/harryjmoss/explicates/badge.svg?branch=master)
 
+A fork of [Explicates - A PostgreSQL-backed Web Annotation server](https://github.com/alexandermendes/explicates) by Alexander Mendes- forked at [v0.3.0](https://github.com/alexandermendes/explicates/commit/bc504498ef330fab46f2334f96631457d520ec90)
+
 [**Read the documentation**](https://harryjmoss.github.io/explicates/)
 
-A fork of Explicates - A PostgreSQL-backed Web Annotation server by Alexander Mendes (https://github.com/alexandermendes/explicates) - forked at v0.3.0
 
 ## Setup
 
