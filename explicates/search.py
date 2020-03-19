@@ -21,6 +21,12 @@ except ImportError:  # pragma: no cover
 from explicates.model.collection import Collection
 from explicates.model.annotation import Annotation
 
+def print_query(query):
+    from flask_sqlalchemy import get_debug_queries
+    res = query.all()
+    info = get_debug_queries()[0]
+    print('%s\n%s\n%s' % (info.statement, info.parameters, info.duration))
+
 
 class Search(object):
     """Search class for Annotations."""
@@ -59,13 +65,18 @@ class Search(object):
         if len(clauses) > 1:
             clauses = and_(*clauses)
 
-        return (self.db.session.query(Annotation)
-                .join(Collection)
-                .filter(*clauses)
-                .order_by(order_by)
-                .limit(limit)
-                .offset(offset)
-                .all())
+        ret = (
+            self.db.session.query(Annotation)
+            .join(Collection)
+            .filter(*clauses)
+            .order_by(order_by)
+            .limit(limit)
+            .offset(offset)
+        )
+
+        print_query(ret)
+
+        return ret.all()
 
     def _parse_json(self, key, data):
         if isinstance(data, dict):

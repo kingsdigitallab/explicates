@@ -10,6 +10,7 @@ from explicates.api.collections import CollectionsAPI
 from explicates.api.annotations import AnnotationsAPI
 from explicates.api.index import IndexAPI
 from explicates.api.search import SearchAPI
+from explicates.api.tags import TagsAPI
 from explicates.api.export import ExportAPI
 from explicates.api.batch import BatchAPI
 
@@ -28,5 +29,6 @@ register_api(CollectionsAPI, 'collections', '/annotations/<collection_id>/')
 register_api(AnnotationsAPI, 'annotations',
              '/annotations/<collection_id>/<annotation_id>/')
 register_api(SearchAPI, 'search', '/search/')
+register_api(TagsAPI, 'tags', '/tags/')
 register_api(ExportAPI, 'export', '/export/<collection_id>/')
 register_api(BatchAPI, 'batch', '/batch/')
