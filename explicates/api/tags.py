@@ -24,7 +24,7 @@ class TagsAPI(APIBase, MethodView):
     def _filter_valid_params(self, data):
         """Return the valid search parameters."""
         valid_keys = ['contains', 'collection', 'fts', 'fts_phrase', 'limit',
-                      'range', 'order_by', 'offset', 'deleted']
+                      'range', 'order_by', 'offset', 'deleted', 'q']
         return {k: v for k, v in data.items() if k in valid_keys}
 
     def get(self):
@@ -43,10 +43,14 @@ class TagsAPI(APIBase, MethodView):
         return self._get_response_from_tags(tags)
 
     def _suggests(self, **params):
-        return [
+        ret = [
             ['tag1', 'id1'],
             ['tag2', 'id2'],
         ]
+
+        ret = search.suggest_tags(**params)
+
+        return ret
 
     def _get_response_from_tags(self, tags):
         context = 'http://www.w3.org/ns/anno.jsonld'
@@ -55,6 +59,7 @@ class TagsAPI(APIBase, MethodView):
         status_code = 200
 
         out = {
+            '@context': context,
             'first': {
                 'id': '',
                 'items': [
@@ -72,7 +77,6 @@ class TagsAPI(APIBase, MethodView):
             },
             'total': len(tags),
         }
-        out['@context'] = context
         response = jsonify(out)
         response.mimetype = 'application/ld+json; profile="{}"'.format(context)
 

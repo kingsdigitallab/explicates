@@ -34,6 +34,55 @@ class Search(object):
     def __init__(self, db):
         self.db = db
 
+    def suggest_tags(self, contains=None, collection=None, fts=None, fts_phrase=None,
+               limit=None, range=None, order_by='created', offset=0,
+               deleted=None, q=''):
+        
+        clauses = [
+            Annotation.deleted == False,
+        ]
+
+        tag_field = self._get_vector('body')['value'].astext
+
+        q = (q or '').strip()
+
+        if q:
+            # https://stackoverflow.com/a/48528810
+            # gh-829: without simple, a query for a:* will return nothing 
+            # and take several seconds.
+            clause = func.to_tsvector(tag_field).match(q+':*', postgresql_regconfig='simple')
+        else:
+            clause = tag_field.astext > ''
+        clauses.append(clause)
+
+        collection_clause = self._get_collection_clause(collection)
+        clauses.append(collection_clause)
+
+        order = [tag_field]
+        if q:
+            # make sure tags starting with search letter appear first
+            order.insert(0, tag_field.ilike(q[0]+'%').desc())
+
+        res = (
+            self.db.session.query(tag_field)
+            .join(Collection)
+            .filter(*clauses)
+            .group_by(tag_field)
+            .order_by(*order)
+            .limit(limit)
+            .offset(offset)
+        )
+
+        # print_query(res)
+
+        ret = []
+        for r in res:
+            ret.append([
+                r[0], 1
+            ])
+        
+        return ret
+
     def search(self, contains=None, collection=None, fts=None, fts_phrase=None,
                limit=None, range=None, order_by='created', offset=0,
                deleted=None):
