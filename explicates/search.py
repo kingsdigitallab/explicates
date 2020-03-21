@@ -2,6 +2,7 @@
 """Search module."""
 
 import json
+import re
 from sqlalchemy import func
 from sqlalchemy.sql import and_, or_
 from sqlalchemy.exc import InvalidRequestError
@@ -37,6 +38,9 @@ class Search(object):
     def suggest_tags(self, contains=None, collection=None, fts=None, fts_phrase=None,
                limit=None, range=None, order_by='created', offset=0,
                deleted=None, q=''):
+
+        from time import time
+        t0 = time()
         
         clauses = [
             Annotation.deleted == False,
@@ -44,15 +48,22 @@ class Search(object):
 
         tag_field = self._get_vector('body')['value'].astext
 
-        q = (q or '').strip()
+        q = re.sub(r'[^\w-]', r'', (q or '')).strip()
 
         if q:
             # https://stackoverflow.com/a/48528810
-            # gh-829: without simple, a query for a:* will return nothing 
-            # and take several seconds.
-            clause = func.to_tsvector(tag_field).match(q+':*', postgresql_regconfig='simple')
+            # gh-829: tsquery('english', 'a:*') => '' (because of stop words)
+            # which causes two bugs: a) no results & b) query takes 5+ seconds
+            # So we fallback to 'simple' mode 
+            # which is unstemmed and preserves stop words.
+            clause = '''to_tsvector((annotation._data -> 'body') ->> 'value')
+                @@ coalesce(
+                    nullif(to_tsquery('english', '{0}:*'), ''), 
+                    to_tsquery('simple', '{0}:*')
+                )
+            '''.format(q)
         else:
-            clause = tag_field.astext > ''
+            clause = tag_field > ''
         clauses.append(clause)
 
         collection_clause = self._get_collection_clause(collection)
@@ -73,7 +84,10 @@ class Search(object):
             .offset(offset)
         )
 
-        # print_query(res)
+        print_query(res)
+
+        t1 = time()
+        print(t1-t0)
 
         ret = []
         for r in res:
@@ -81,6 +95,9 @@ class Search(object):
                 r[0], 1
             ])
         
+        t2 = time()
+        print(t2-t1)
+
         return ret
 
     def search(self, contains=None, collection=None, fts=None, fts_phrase=None,

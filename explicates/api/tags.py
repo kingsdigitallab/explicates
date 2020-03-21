@@ -40,7 +40,9 @@ class TagsAPI(APIBase, MethodView):
         except (ValueError, ProgrammingError) as err:
             abort(400, err)
 
-        return self._get_response_from_tags(tags)
+        ret = self._get_response_from_tags(tags)
+
+        return ret
 
     def _suggests(self, **params):
         ret = [
