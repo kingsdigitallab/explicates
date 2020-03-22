@@ -34,14 +34,29 @@ class Search(object):
 
     def __init__(self, db):
         self.db = db
+        self.collection_urls_key = {}
 
-    def suggest_tags(self, contains=None, collection=None, fts=None, fts_phrase=None,
-               limit=None, range=None, order_by='created', offset=0,
-               deleted=None, q=''):
+    def get_collection_key_from_url(self, url):
+        ret = self.collection_urls_key.get(url, None)
+        if not ret:
+            collection_clause = self._get_collection_clause(url)
+            ret = self.db.session.query(Collection.key).filter(collection_clause).first()
+            if ret:
+                ret = ret[0]
+                self.collection_urls_key[url] = ret
+        return ret
+
+    def suggest_tags(self, collection=None, q='', 
+                     order_by='created', limit=None, offset=0):
+        '''Returns unique applied tag labels that partially match the query q'''
 
         from time import time
         t0 = time()
-        
+
+        # much faster to get this key separately than doing a sql join
+        collection_key = self.get_collection_key_from_url(collection)
+        if not collection_key: return []
+
         clauses = [
             Annotation.deleted == False,
         ]
@@ -66,8 +81,7 @@ class Search(object):
             clause = tag_field > ''
         clauses.append(clause)
 
-        collection_clause = self._get_collection_clause(collection)
-        clauses.append(collection_clause)
+        clauses.append(Annotation.collection_key==collection_key)
 
         order = [tag_field]
         if q:
@@ -76,7 +90,6 @@ class Search(object):
 
         res = (
             self.db.session.query(tag_field)
-            .join(Collection)
             .filter(*clauses)
             .group_by(tag_field)
             .order_by(*order)
@@ -87,7 +100,7 @@ class Search(object):
         print_query(res)
 
         t1 = time()
-        print(t1-t0)
+        print(t1-t0, 'query')
 
         ret = []
         for r in res:
@@ -96,7 +109,8 @@ class Search(object):
             ])
         
         t2 = time()
-        print(t2-t1)
+        print(t2-t1, 'for')
+        print(t2-t0, 'total')
 
         return ret
 
@@ -104,6 +118,13 @@ class Search(object):
                limit=None, range=None, order_by='created', offset=0,
                deleted=None):
         """Search for Annotations."""
+
+        # ~10x faster to get this key separately than doing a sql join
+        collection_key = None
+        if collection:
+            collection_key = self.get_collection_key_from_url(collection)
+            if not collection_key: return []
+
         clauses = [Annotation.deleted == False]
         if deleted:
             clauses = self._get_deleted_clause(deleted)
@@ -112,9 +133,8 @@ class Search(object):
             contains_clause = self._get_contains_clause(contains)
             clauses.append(contains_clause)
 
-        if collection:
-            collection_clause = self._get_collection_clause(collection)
-            clauses.append(collection_clause)
+        if collection_key:
+            clauses.append(Annotation.collection_key==collection_key)
 
         if fts:
             fts_clauses = self._get_fts_clauses(fts)
@@ -133,9 +153,8 @@ class Search(object):
 
         ret = (
             self.db.session.query(Annotation)
-            .join(Collection)
             .filter(*clauses)
-            .order_by(order_by)
+            .order_by('annotation.'+order_by)
             .limit(limit)
             .offset(offset)
         )

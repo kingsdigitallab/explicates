@@ -23,8 +23,7 @@ class TagsAPI(APIBase, MethodView):
 
     def _filter_valid_params(self, data):
         """Return the valid search parameters."""
-        valid_keys = ['contains', 'collection', 'fts', 'fts_phrase', 'limit',
-                      'range', 'order_by', 'offset', 'deleted', 'q']
+        valid_keys = ['collection', 'limit', 'order_by', 'offset', 'q']
         return {k: v for k, v in data.items() if k in valid_keys}
 
     def get(self):
