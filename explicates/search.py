@@ -50,9 +50,6 @@ class Search(object):
                      order_by='created', limit=None, offset=0):
         '''Returns unique applied tag labels that partially match the query q'''
 
-        from time import time
-        t0 = time()
-
         # much faster to get this key separately than doing a sql join
         collection_key = self.get_collection_key_from_url(collection)
         if not collection_key: return []
@@ -97,21 +94,12 @@ class Search(object):
             .offset(offset)
         )
 
-        print_query(res)
-
-        t1 = time()
-        print(t1-t0, 'query')
-
         ret = []
-        for r in res:
+        for r in res.all():
             ret.append([
                 r[0], 1
             ])
         
-        t2 = time()
-        print(t2-t1, 'for')
-        print(t2-t0, 'total')
-
         return ret
 
     def search(self, contains=None, collection=None, fts=None, fts_phrase=None,
@@ -158,8 +146,6 @@ class Search(object):
             .limit(limit)
             .offset(offset)
         )
-
-        print_query(ret)
 
         return ret.all()
 
